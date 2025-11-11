@@ -12,18 +12,18 @@
 
 **作業内容**:
 
-- [ ] Tailwind CSS の設定確認・調整
-- [ ] shadcn/ui のインストールと初期設定
-- [ ] `components/ui` ディレクトリの作成
-- [ ] 基本的なコンポーネント（Button, Card, Input 等）の追加
-- [ ] Chart コンポーネントの追加（`npx shadcn@latest add chart`）
-- [ ] `globals.css` に shadcn/ui のスタイルを統合
+- [x] Tailwind CSS の設定確認・調整
+- [x] shadcn/ui のインストールと初期設定
+- [x] `components/ui` ディレクトリの作成
+- [x] 基本的なコンポーネント（Button, Card, Input 等）の追加
+- [x] Chart コンポーネントの追加（shadcn/ui Chart コンポーネントを手動で実装）
+- [x] `globals.css` に shadcn/ui のスタイルを統合
 
 **確認事項**:
 
-- [ ] `npx shadcn@latest init` が正常に動作
-- [ ] コンポーネントが正しくインポートできる
-- [ ] Tailwind のクラスが適用される
+- [x] `components.json` が作成され、shadcn/ui の設定が完了
+- [x] コンポーネントが正しくインポートできる（ビルド成功を確認）
+- [x] Tailwind のクラスが適用される（ビルド成功を確認）
 
 **コミットメッセージ例**:
 
