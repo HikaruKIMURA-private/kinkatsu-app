@@ -39,20 +39,20 @@ feat: Tailwind CSS と shadcn/ui をセットアップ
 
 **作業内容**:
 
-- [ ] Prisma のインストール
-- [ ] `prisma/schema.prisma` の作成（仕様書のスキーマを反映）
-- [ ] `lib/prisma.ts` の作成（Prisma Client のシングルトン）
-- [ ] `prisma migrate dev --name init` でマイグレーション実行
-- [ ] `prisma/seed.ts` の作成（初期種目データ）
-- [ ] `package.json` に `prisma db seed` スクリプト追加
-- [ ] `prisma db seed` で初期データ投入
+- [x] Prisma のインストール
+- [x] `prisma/schema.prisma` の作成（仕様書のスキーマを反映）
+- [x] `lib/prisma.ts` の作成（Prisma Client のシングルトン）
+- [x] `prisma migrate dev --name init` でマイグレーション実行
+- [x] `prisma/seed.ts` の作成（初期種目データ）
+- [x] `package.json` に `prisma db seed` スクリプト追加
+- [x] `prisma db seed` で初期データ投入
 
 **確認事項**:
 
-- [ ] マイグレーションが正常に実行される
-- [ ] スキーマが正しく反映されている
-- [ ] 初期種目が 10 件投入されている
-- [ ] Prisma Client が正しく初期化される
+- [x] マイグレーションが正常に実行される
+- [x] スキーマが正しく反映されている
+- [x] 初期種目が 10 件投入されている
+- [x] Prisma Client が正しく初期化される
 
 **コミットメッセージ例**:
 

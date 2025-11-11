@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BodyPart {
+  CHEST
+  BACK
+  LEGS
+  ABS
+  ARMS
+  SHOULDERS
+  FOREARMS
+  CALVES
+  OTHER
+}
+
+model User {
+  id         String   @id @default(cuid())
+  externalId String   @unique // better-auth の userId と紐付け
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  workouts   Workout[]
+
+  @@index([externalId])
+}
+
+model Exercise {
+  id        String   @id @default(cuid())
+  name      String
+  bodyPart  BodyPart
+  createdBy String?
+  createdAt DateTime @default(now())
+
+  workoutItems WorkoutItem[]
+
+  @@unique([name, bodyPart]) // 同名+同部位は不可
+  @@index([bodyPart])
+  @@index([name])
+}
+
+model Workout {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime
+  bodyWeight  Decimal? @db.Decimal(5, 2) // kg
+  dayRpe      Decimal? @db.Decimal(3, 1)  // 当日の主観的疲労
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items WorkoutItem[]
+
+  @@unique([userId, date]) // 1日1件
+  @@index([userId, date])
+}
+
+model WorkoutItem {
+  id          String   @id @default(cuid())
+  workoutId   String
+  exerciseId  String
+  orderIndex  Int
+  createdAt   DateTime @default(now())
+
+  workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
+  sets     WorkoutSet[]
+
+  @@index([workoutId, orderIndex])
+}
+
+model WorkoutSet {
+  id            String   @id @default(cuid())
+  workoutItemId String
+  weightKg      Decimal  @db.Decimal(6, 2)
+  reps          Int
+  rpe           Decimal? @db.Decimal(3, 1)
+  createdAt     DateTime @default(now())
+
+  workoutItem WorkoutItem @relation(fields: [workoutItemId], references: [id], onDelete: Cascade)
+
+  @@index([workoutItemId])
+}
+
