@@ -7,6 +7,9 @@
     "supabase": {
       "url": "https://mcp.supabase.com/mcp",
       "headers": {}
+    },
+    "vercel": {
+      "url": "https://mcp.vercel.com"
     }
   }
 }
