@@ -68,17 +68,17 @@ feat: Prisma スキーマと初期データをセットアップ
 
 **作業内容**:
 
-- [ ] Supabase プロジェクトの作成（または既存プロジェクトの確認）
-- [ ] `.env.local` に `DATABASE_URL` を設定（接続プール URL）
-- [ ] pgBouncer の Transaction モード URL を設定
-- [ ] Prisma の接続設定を確認
-- [ ] 接続テスト（`prisma db pull` または `prisma migrate deploy`）
+- [x] Supabase プロジェクトの作成（または既存プロジェクトの確認）
+- [x] `.env.local` に `DATABASE_URL` を設定（接続プール URL）
+- [x] pgBouncer の Transaction モード URL を設定
+- [x] Prisma の接続設定を確認
+- [x] 接続テスト（`prisma db pull` または `prisma migrate deploy`）
 
 **確認事項**:
 
-- [ ] `.env.local` が `.gitignore` に含まれている
-- [ ] 接続プール URL が正しく設定されている
-- [ ] Prisma が Supabase に接続できる
+- [x] `.env.local` が `.gitignore` に含まれている
+- [x] 接続プール URL が正しく設定されている
+- [x] Prisma が Supabase に接続できる
 
 **コミットメッセージ例**:
 
