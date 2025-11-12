@@ -96,19 +96,34 @@ feat: Supabase 接続設定を追加
 
 **作業内容**:
 
-- [ ] better-auth のインストール
-- [ ] better-auth の設定ファイル作成（Passkey 有効化）
-- [ ] `lib/auth.ts` の作成（`getCurrentUser()` の骨子）
-- [ ] `/login` ページの作成
-- [ ] Passkey 登録/ログインの UI 実装
-- [ ] 認証後のリダイレクト処理
+- [x] better-auth のインストール
+- [x] better-auth の設定ファイル作成（Passkey 有効化）
+- [x] `lib/auth.ts` の作成（`getCurrentUser()` の骨子）
+- [x] `/login` ページの作成
+- [x] Passkey 登録/ログインの UI 実装
+- [x] 認証後のリダイレクト処理
+- [x] `.env.local` に `BETTER_AUTH_SECRET` を追加
 
 **確認事項**:
 
-- [ ] Passkey の登録ができる
-- [ ] Passkey でログインができる
+- [x] ログインページが表示される
+- [x] エラーハンドリングが動作する
+- [x] UI が正常に動作する
+- [ ] Passkey の登録ができる（500 エラーが発生中）
+- [ ] Passkey でログインができる（500 エラーが発生中）
 - [ ] ログイン後に適切なページにリダイレクトされる
 - [ ] セッションが正しく保持される
+
+**残っている課題**:
+
+- [ ] Passkey プラグインの 500 エラーの解決
+  - `signIn.passkey()` 呼び出し時にサーバーエラーが発生
+  - better-auth の Passkey プラグインの正しい使用方法を確認
+- [ ] 初回登録フローの実装
+  - Passkey の登録には認証済みユーザーが必要
+  - 初回登録時の Passkey 作成方法を実装
+
+**注意**: `.env.local` に `BETTER_AUTH_SECRET` を設定済み
 
 **コミットメッセージ例**:
 

@@ -91,3 +91,89 @@ model WorkoutSet {
   @@index([workoutItemId])
 }
 
+// better-auth 用のテーブル
+model BetterAuthUser {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  accounts BetterAuthAccount[]
+  sessions BetterAuthSession[]
+  passkeys BetterAuthPasskey[]
+
+  @@map("better_auth_user")
+}
+
+model BetterAuthSession {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("better_auth_session")
+}
+
+model BetterAuthAccount {
+  id                String   @id @default(cuid())
+  accountId         String
+  providerId        String
+  userId            String
+  accessToken       String?
+  refreshToken      String?
+  idToken           String?
+  expiresAt         DateTime?
+  password          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("better_auth_account")
+}
+
+model BetterAuthVerification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+  @@map("better_auth_verification")
+}
+
+model BetterAuthPasskey {
+  id            String   @id @default(cuid())
+  name          String?
+  publicKey     String   @db.Text
+  userId        String
+  credentialId  String   @unique
+  counter       BigInt   @default(0)
+  deviceType    String
+  backedUp      Boolean  @default(false)
+  transports    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([credentialId])
+  @@map("better_auth_passkey")
+}
+
