@@ -106,7 +106,7 @@ feat: Supabase 接続設定を追加
 - [x] メール/パスワード認証の実装
 - [x] ユーザー登録機能の実装
 - [x] ログイン/登録フォームの UI 実装
-- [x] Prismaスキーマに`scope`フィールドを追加（BetterAuthAccount）
+- [x] Prisma スキーマに`scope`フィールドを追加（BetterAuthAccount）
 
 **確認事項**:
 
@@ -123,8 +123,8 @@ feat: Supabase 接続設定を追加
 **実装内容**:
 
 - [x] GitHub OAuth プロバイダーの設定
-- [x] GitHub OAuth アプリのコールバックURL設定（`http://localhost:3000/api/auth/callback/github`）
-- [x] Prismaスキーマに`scope`フィールドを追加してGitHub OAuth対応
+- [x] GitHub OAuth アプリのコールバック URL 設定（`http://localhost:3000/api/auth/callback/github`）
+- [x] Prisma スキーマに`scope`フィールドを追加して GitHub OAuth 対応
 - [x] エラーハンドリングの改善（Failed to fetch エラーの詳細表示）
 
 **注意**: `.env.local` に `BETTER_AUTH_SECRET`、`GITHUB_CLIENT_ID`、`GITHUB_CLIENT_SECRET` を設定済み
