@@ -135,6 +135,7 @@ model BetterAuthAccount {
   idToken           String?
   expiresAt         DateTime?
   password          String?
+  scope             String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -162,7 +163,7 @@ model BetterAuthPasskey {
   name          String?
   publicKey     String   @db.Text
   userId        String
-  credentialId  String   @unique
+  credentialID  String   @unique @map("credentialId")
   counter       BigInt   @default(0)
   deviceType    String
   backedUp      Boolean  @default(false)
@@ -173,7 +174,7 @@ model BetterAuthPasskey {
   user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([credentialId])
+  @@index([credentialID])
   @@map("better_auth_passkey")
 }
 

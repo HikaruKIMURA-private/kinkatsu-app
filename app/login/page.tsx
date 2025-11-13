@@ -5,6 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,29 +13,45 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
-  const handlePasskeySignIn = async () => {
+  const handleGitHubSignIn = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const { data, error: signInError } = await authClient.signIn.passkey();
+      // GitHubログインは自動的にリダイレクトされる
+      const result = await authClient.signIn.social({
+        provider: "github",
+        callbackURL: "/dashboard",
+      });
 
-      if (signInError) {
-        setError(signInError.message || "ログインに失敗しました");
+      // 通常、リダイレクトされるためここには到達しない
+      if (result?.error) {
+        setError(result.error.message || "GitHubログインに失敗しました");
+        console.error("GitHub ログインエラー:", result.error);
+        setIsLoading(false);
         return;
       }
-
-      if (data) {
-        // ログイン成功
-        router.push("/dashboard");
-        router.refresh();
-      }
     } catch (err) {
-      setError("予期しないエラーが発生しました");
-      console.error(err);
-    } finally {
+      // ネットワークエラーやその他のエラー
+      const errorMessage =
+        err instanceof Error ? err.message : "予期しないエラーが発生しました";
+
+      // Failed to fetch エラーの場合、より詳細な情報を表示
+      if (
+        errorMessage.includes("Failed to fetch") ||
+        errorMessage.includes("fetch")
+      ) {
+        setError(
+          "GitHubログインに接続できませんでした。環境変数（GITHUB_CLIENT_ID、GITHUB_CLIENT_SECRET）が正しく設定されているか確認してください。"
+        );
+      } else {
+        setError(`GitHubログインエラー: ${errorMessage}`);
+      }
+
+      console.error("GitHub ログイン例外:", err);
       setIsLoading(false);
     }
   };
@@ -54,7 +71,9 @@ export default function LoginPage() {
         });
 
         if (signUpError) {
+          console.error("新規登録エラー詳細:", signUpError);
           setError(signUpError.message || "登録に失敗しました");
+          setIsLoading(false);
           return;
         }
 
@@ -72,6 +91,7 @@ export default function LoginPage() {
 
         if (signInError) {
           setError(signInError.message || "ログインに失敗しました");
+          setIsLoading(false);
           return;
         }
 
@@ -82,39 +102,23 @@ export default function LoginPage() {
         }
       }
     } catch (err) {
-      setError("予期しないエラーが発生しました");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      // ネットワークエラーやその他のエラー
+      const errorMessage =
+        err instanceof Error ? err.message : "予期しないエラーが発生しました";
 
-  const handlePasskeyRegister = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Passkey の登録は認証済みユーザーが必要
-      // 初回登録時は signIn.passkey() でユーザーを作成し、同時に Passkey を登録
-      // 既存ユーザーが Passkey を追加する場合は authClient.passkey.addPasskey() を使用
-      const { data, error: registerError } = await authClient.signIn.passkey();
-
-      if (registerError) {
-        // 初回登録の場合、エラーになる可能性がある
-        // その場合は、まずユーザーを作成する必要がある
-        setError(registerError.message || "パスキーの登録に失敗しました。まずログインしてください。");
-        return;
+      // Failed to fetch エラーの場合、より詳細な情報を表示
+      if (
+        errorMessage.includes("Failed to fetch") ||
+        errorMessage.includes("fetch")
+      ) {
+        setError(
+          "サーバーに接続できませんでした。開発サーバーが起動しているか確認してください。"
+        );
+      } else {
+        setError(`エラー: ${errorMessage}`);
       }
 
-      if (data) {
-        // 登録成功
-        router.push("/dashboard");
-        router.refresh();
-      }
-    } catch (err) {
-      setError("予期しないエラーが発生しました");
-      console.error(err);
-    } finally {
+      console.error("メール/パスワード認証例外:", err);
       setIsLoading(false);
     }
   };
@@ -155,16 +159,34 @@ export default function LoginPage() {
             <label htmlFor="password" className="text-sm font-medium">
               パスワード
             </label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={isLoading}
-              minLength={8}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+                minLength={8}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={
+                  showPassword ? "パスワードを非表示" : "パスワードを表示"
+                }
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
 
           <Button
@@ -190,26 +212,14 @@ export default function LoginPage() {
 
         <div className="space-y-2">
           <Button
-            onClick={handlePasskeySignIn}
+            onClick={handleGitHubSignIn}
             disabled={isLoading}
             variant="outline"
             className="w-full"
             size="lg"
           >
-            {isLoading ? "処理中..." : "Passkey でログイン"}
+            {isLoading ? "処理中..." : "GitHub でログイン"}
           </Button>
-
-          {!isSignUp && (
-            <Button
-              onClick={handlePasskeyRegister}
-              disabled={isLoading}
-              variant="outline"
-              className="w-full"
-              size="lg"
-            >
-              {isLoading ? "処理中..." : "Passkey を登録"}
-            </Button>
-          )}
         </div>
 
         <div className="text-center text-sm">
@@ -231,4 +241,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
