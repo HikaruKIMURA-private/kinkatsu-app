@@ -90,22 +90,23 @@ feat: Supabase 接続設定を追加
 
 ---
 
-### Task 4: better-auth（Passkey）導入 → /login
+### Task 4: better-auth（GitHub OAuth）導入 → /login
 
 **目的**: 認証機能の実装
 
 **作業内容**:
 
 - [x] better-auth のインストール
-- [x] better-auth の設定ファイル作成（Passkey 有効化）
+- [x] better-auth の設定ファイル作成（GitHub OAuth 有効化）
 - [x] `lib/auth.ts` の作成（`getCurrentUser()` の骨子）
 - [x] `/login` ページの作成
-- [x] Passkey 登録/ログインの UI 実装
+- [x] GitHub OAuth ログインの UI 実装
 - [x] 認証後のリダイレクト処理
 - [x] `.env.local` に `BETTER_AUTH_SECRET` を追加
 - [x] メール/パスワード認証の実装
 - [x] ユーザー登録機能の実装
 - [x] ログイン/登録フォームの UI 実装
+- [x] Prismaスキーマに`scope`フィールドを追加（BetterAuthAccount）
 
 **確認事項**:
 
@@ -114,22 +115,19 @@ feat: Supabase 接続設定を追加
 - [x] UI が正常に動作する
 - [x] メール/パスワードでログインできる
 - [x] メール/パスワードで新規登録できる
+- [x] GitHub OAuth でログインできる
+- [x] ログイン後に適切なページにリダイレクトされる（`/dashboard`）
+- [x] セッションが正しく保持される
 - [x] ビルドが成功する
-- [ ] Passkey の登録ができる（500 エラーが発生中）
-- [ ] Passkey でログインができる（500 エラーが発生中）
-- [ ] ログイン後に適切なページにリダイレクトされる
-- [ ] セッションが正しく保持される
 
-**残っている課題**:
+**実装内容**:
 
-- [ ] Passkey プラグインの 500 エラーの解決
-  - `signIn.passkey()` 呼び出し時にサーバーエラーが発生
-  - better-auth の Passkey プラグインの正しい使用方法を確認
-- [ ] 初回登録フローの実装
-  - Passkey の登録には認証済みユーザーが必要
-  - 初回登録時の Passkey 作成方法を実装
+- [x] GitHub OAuth プロバイダーの設定
+- [x] GitHub OAuth アプリのコールバックURL設定（`http://localhost:3000/api/auth/callback/github`）
+- [x] Prismaスキーマに`scope`フィールドを追加してGitHub OAuth対応
+- [x] エラーハンドリングの改善（Failed to fetch エラーの詳細表示）
 
-**注意**: `.env.local` に `BETTER_AUTH_SECRET` を設定済み
+**注意**: `.env.local` に `BETTER_AUTH_SECRET`、`GITHUB_CLIENT_ID`、`GITHUB_CLIENT_SECRET` を設定済み
 
 **コミットメッセージ例**:
 
