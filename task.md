@@ -132,7 +132,7 @@ feat: Supabase 接続設定を追加
 **コミットメッセージ例**:
 
 ```
-feat: better-auth と Passkey 認証を実装
+feat: better-auth と GitHub OAuth 認証を実装
 ```
 
 ---
