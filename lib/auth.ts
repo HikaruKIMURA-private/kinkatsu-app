@@ -3,14 +3,12 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { cookies } from "next/headers";
+import { baseUrl } from "./base-url";
 
 // better-auth の設定
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL:
-    process.env.BETTER_AUTH_URL ||
-    process.env.BETTER_AUTH_ORIGIN ||
-    "http://localhost:3000",
+  baseURL: baseUrl(),
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
