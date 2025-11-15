@@ -4,6 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { cookies } from "next/headers";
 import { baseUrl } from "./base-url";
+import { nextCookies } from "better-auth/next-js";
 
 // better-auth の設定
 export const auth = betterAuth({
@@ -34,6 +35,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  plugins: [nextCookies()],
 });
 
 // セッションからユーザーIDを取得するヘルパー関数

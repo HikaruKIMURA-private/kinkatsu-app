@@ -45,7 +45,7 @@ export default function LoginPage() {
         errorMessage.includes("fetch")
       ) {
         setError(
-          "GitHubログインに接続できませんでした。環境変数（GITHUB_CLIENT_ID、GITHUB_CLIENT_SECRET）が正しく設定されているか確認してください。"
+          "GitHubログインに接続できませんでした。環境変数（GITHUB_CLIENT_ID、GITHUB_CLIENT_SECRET）が正しく設定されているか確認してください。",
         );
       } else {
         setError(`GitHubログインエラー: ${errorMessage}`);
@@ -112,7 +112,7 @@ export default function LoginPage() {
         errorMessage.includes("fetch")
       ) {
         setError(
-          "サーバーに接続できませんでした。開発サーバーが起動しているか確認してください。"
+          "サーバーに接続できませんでした。開発サーバーが起動しているか確認してください。",
         );
       } else {
         setError(`エラー: ${errorMessage}`);
