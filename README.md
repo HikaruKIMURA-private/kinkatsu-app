@@ -1,5 +1,51 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## ローカル開発環境のセットアップ
+
+### 前提条件
+
+- Docker Desktop がインストールされ、起動していること
+- Supabase CLI がインストールされていること（`brew install supabase/tap/supabase`）
+
+### 環境変数の設定
+
+プロジェクトルートに `.env.local` ファイルを作成し、以下の内容を設定してください：
+
+```env
+# ローカルSupabase接続
+DATABASE_URL="postgresql://postgres:postgres@localhost:54322/postgres"
+
+# Better Auth設定
+BETTER_AUTH_SECRET="your-local-secret-key-change-this-in-production"
+BETTER_AUTH_URL="http://localhost:3000"
+
+# GitHub OAuth（開発用）
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
+```
+
+### ローカルSupabaseの起動
+
+```bash
+# Supabaseを起動
+bun run supabase:start
+
+# または、SupabaseとNext.jsを同時に起動
+bun run dev:local
+```
+
+起動後、以下のURLでアクセスできます：
+- Supabase Studio: http://localhost:54323
+- Next.js アプリ: http://localhost:3000
+
+### データベースマイグレーション
+
+ローカルSupabaseにマイグレーションを適用：
+
+```bash
+bun run db:migrate
+```
+
 ## Getting Started
 
 First, run the development server:

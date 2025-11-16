@@ -23,21 +23,11 @@ enum BodyPart {
   OTHER
 }
 
-model User {
-  id         String   @id @default(cuid())
-  externalId String   @unique // better-auth の userId と紐付け
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  workouts   Workout[]
-
-  @@index([externalId])
-}
-
 model Exercise {
   id        String   @id @default(cuid())
   name      String
   bodyPart  BodyPart
-  createdBy String?
+  createdBy String?  // User.id を参照（外部キー制約なし）
   createdAt DateTime @default(now())
 
   workoutItems WorkoutItem[]
@@ -91,8 +81,8 @@ model WorkoutSet {
   @@index([workoutItemId])
 }
 
-// better-auth 用のテーブル
-model BetterAuthUser {
+// better-auth 用のテーブル（デフォルト命名）
+model User {
   id            String   @id @default(cuid())
   name          String?
   email         String   @unique
@@ -101,14 +91,15 @@ model BetterAuthUser {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  accounts BetterAuthAccount[]
-  sessions BetterAuthSession[]
-  passkeys BetterAuthPasskey[]
+  accounts Account[]
+  sessions Session[]
+  passkeys Passkey[]
+  workouts Workout[]
 
-  @@map("better_auth_user")
+  @@map("user")
 }
 
-model BetterAuthSession {
+model Session {
   id        String   @id @default(cuid())
   expiresAt DateTime
   token     String   @unique
@@ -118,14 +109,14 @@ model BetterAuthSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([token])
-  @@map("better_auth_session")
+  @@map("session")
 }
 
-model BetterAuthAccount {
+model Account {
   id                String   @id @default(cuid())
   accountId         String
   providerId        String
@@ -139,14 +130,14 @@ model BetterAuthAccount {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
   @@index([userId])
-  @@map("better_auth_account")
+  @@map("account")
 }
 
-model BetterAuthVerification {
+model Verification {
   id         String   @id @default(cuid())
   identifier String
   value      String
@@ -155,26 +146,26 @@ model BetterAuthVerification {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, value])
-  @@map("better_auth_verification")
+  @@map("verification")
 }
 
-model BetterAuthPasskey {
-  id            String   @id @default(cuid())
-  name          String?
-  publicKey     String   @db.Text
-  userId        String
-  credentialID  String   @unique @map("credentialId")
-  counter       BigInt   @default(0)
-  deviceType    String
-  backedUp      Boolean  @default(false)
-  transports    String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model Passkey {
+  id           String   @id @default(cuid())
+  name         String?
+  publicKey    String   @db.Text
+  userId       String
+  credentialID String   @unique @map("credentialId")
+  counter      BigInt   @default(0)
+  deviceType   String
+  backedUp     Boolean  @default(false)
+  transports   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([credentialID])
-  @@map("better_auth_passkey")
+  @@map("passkey")
 }
 

@@ -150,21 +150,27 @@ enum BodyPart {
   OTHER
 }
 
+// better-auth の User モデル（デフォルト命名）
 model User {
-  id         String   @id @default(cuid())
-  externalId String   @unique // better-auth の userId と紐付け
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  workouts   Workout[]
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  @@index([externalId])
+  accounts Account[]
+  sessions Session[]
+  passkeys Passkey[]
+  workouts Workout[]
 }
 
 model Exercise {
   id        String   @id @default(cuid())
   name      String
   bodyPart  BodyPart
-  createdBy String?
+  createdBy String?  // User.id を参照（外部キー制約なし）
   createdAt DateTime @default(now())
 
   workoutItems WorkoutItem[]
@@ -216,6 +222,73 @@ model WorkoutSet {
   workoutItem WorkoutItem @relation(fields: [workoutItemId], references: [id], onDelete: Cascade)
 
   @@index([workoutItemId])
+}
+
+// better-auth のその他のモデル（デフォルト命名）
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  accountId         String
+  providerId        String
+  userId            String
+  accessToken       String?
+  refreshToken      String?
+  idToken           String?
+  expiresAt         DateTime?
+  password          String?
+  scope             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+}
+
+model Passkey {
+  id           String   @id @default(cuid())
+  name         String?
+  publicKey    String   @db.Text
+  userId       String
+  credentialID String   @unique @map("credentialId")
+  counter      BigInt   @default(0)
+  deviceType   String
+  backedUp     Boolean  @default(false)
+  transports   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([credentialID])
 }
 ```
 
@@ -541,26 +614,27 @@ export default async function DashboardPage() {
 - **RP ID**: Vercel 本番ドメイン
 - 開発/Preview 環境も登録
 
-### ユーザー同期
+### ユーザー取得
 
-初回ログイン時、`User.externalId = better-auth の userId` で upsert
+better-auth の User を直接使用（マッピング不要）
 
 ```typescript
 // lib/auth.ts
 import 'server-only'
 import { cookies } from 'next/headers'
 import { prisma } from './prisma'
+import { auth } from './auth'
 
 export async function getCurrentUser() {
   const cookieStore = await cookies()
-  // 認証SDKでセッション取得 → userId
-  const sessionUserId = /* better-auth から取得 */
-  if (!sessionUserId) return null
+  const session = await auth.api.getSession({
+    headers: { cookie: cookieStore.toString() },
+  })
+  if (!session?.user?.id) return null
 
-  const user = await prisma.user.upsert({
-    where: { externalId: sessionUserId },
-    update: {},
-    create: { externalId: sessionUserId },
+  // better-auth の User を直接取得
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
   })
   return user
 }

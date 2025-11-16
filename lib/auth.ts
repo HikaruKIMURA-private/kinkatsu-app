@@ -1,12 +1,12 @@
 import "server-only";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "./prisma";
+import { nextCookies } from "better-auth/next-js";
 import { cookies } from "next/headers";
 import { baseUrl } from "./base-url";
-import { nextCookies } from "better-auth/next-js";
+import { prisma } from "./prisma";
 
-// better-auth の設定
+// better-auth の設定（デフォルト命名を使用）
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: baseUrl(),
@@ -14,16 +14,19 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   user: {
-    modelName: "BetterAuthUser",
+    modelName: "User",
   },
   session: {
-    modelName: "BetterAuthSession",
+    modelName: "Session",
   },
   account: {
-    modelName: "BetterAuthAccount",
+    modelName: "Account",
   },
   verification: {
-    modelName: "BetterAuthVerification",
+    modelName: "Verification",
+  },
+  passkey: {
+    modelName: "Passkey",
   },
   emailAndPassword: {
     enabled: true,
@@ -62,12 +65,15 @@ export async function getSessionUser() {
   return session?.user || null;
 }
 
-// 現在のユーザーを取得（Task 4 では骨子のみ）
+// 現在のユーザーを取得
 export async function getCurrentUser() {
   const sessionUserId = await getSessionUserId();
   if (!sessionUserId) return null;
 
-  // Task 5 で完全実装（upsert 処理）
-  // 今は骨子のみ
-  return null;
+  // better-auth の User を直接取得
+  const user = await prisma.user.findUnique({
+    where: { id: sessionUserId },
+  });
+
+  return user;
 }
