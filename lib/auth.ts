@@ -43,37 +43,56 @@ export const auth = betterAuth({
 
 // セッションからユーザーIDを取得するヘルパー関数
 export async function getSessionUserId(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const session = await auth.api.getSession({
-    headers: {
-      cookie: cookieStore.toString(),
-    },
-  });
+  try {
+    const cookieStore = await cookies();
+    const session = await auth.api.getSession({
+      headers: {
+        cookie: cookieStore.toString(),
+      },
+    });
 
-  return session?.user?.id || null;
+    return session?.user?.id || null;
+  } catch (error) {
+    // セッション取得エラーは無視してnullを返す（未認証として扱う）
+    console.error("Failed to get session user ID:", error);
+    return null;
+  }
 }
 
 // セッションからユーザー情報を取得するヘルパー関数（デバッグ用）
 export async function getSessionUser() {
-  const cookieStore = await cookies();
-  const session = await auth.api.getSession({
-    headers: {
-      cookie: cookieStore.toString(),
-    },
-  });
+  try {
+    const cookieStore = await cookies();
+    const session = await auth.api.getSession({
+      headers: {
+        cookie: cookieStore.toString(),
+      },
+    });
 
-  return session?.user || null;
+    return session?.user || null;
+  } catch (error) {
+    // セッション取得エラーは無視してnullを返す（未認証として扱う）
+    console.error("Failed to get session user:", error);
+    return null;
+  }
 }
 
 // 現在のユーザーを取得
 export async function getCurrentUser() {
-  const sessionUserId = await getSessionUserId();
-  if (!sessionUserId) return null;
+  try {
+    const sessionUserId = await getSessionUserId();
+    if (!sessionUserId) return null;
 
-  // better-auth の User を直接取得
-  const user = await prisma.user.findUnique({
-    where: { id: sessionUserId },
-  });
+    // better-auth の User を直接取得
+    const user = await prisma.user.findUnique({
+      where: { id: sessionUserId },
+    });
 
-  return user;
+    return user;
+  } catch (error) {
+    // データベースエラーやその他のエラーをログに記録
+    console.error("Failed to get current user:", error);
+    // エラー時はnullを返して未認証として扱う
+    return null;
+  }
 }
