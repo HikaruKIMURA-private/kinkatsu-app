@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "darwin-arm64"]
@@ -11,90 +8,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum BodyPart {
-  CHEST
-  BACK
-  LEGS
-  ABS
-  ARMS
-  SHOULDERS
-  FOREARMS
-  CALVES
-  OTHER
-}
-
 model Exercise {
-  id        String   @id @default(cuid())
-  name      String
-  bodyPart  BodyPart
-  createdBy String?  // User.id を参照（外部キー制約なし）
-  createdAt DateTime @default(now())
-
+  id           String        @id @default(cuid())
+  name         String        @unique
+  createdBy    String?
+  createdAt    DateTime      @default(now())
+  bodyParts    BodyPart[]
   workoutItems WorkoutItem[]
 
-  @@unique([name, bodyPart]) // 同名+同部位は不可
-  @@index([bodyPart])
   @@index([name])
 }
 
 model Workout {
-  id          String   @id @default(cuid())
-  userId      String
-  date        DateTime
-  bodyWeight  Decimal? @db.Decimal(5, 2) // kg
-  dayRpe      Decimal? @db.Decimal(3, 1)  // 当日の主観的疲労
-  notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id         String        @id @default(cuid())
+  userId     String
+  date       DateTime
+  bodyWeight Decimal?      @db.Decimal(5, 2)
+  dayRpe     Decimal?      @db.Decimal(3, 1)
+  notes      String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items      WorkoutItem[]
 
-  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items WorkoutItem[]
-
-  @@unique([userId, date]) // 1日1件
+  @@unique([userId, date])
   @@index([userId, date])
 }
 
 model WorkoutItem {
-  id          String   @id @default(cuid())
-  workoutId   String
-  exerciseId  String
-  orderIndex  Int
-  createdAt   DateTime @default(now())
-
-  workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-  exercise Exercise @relation(fields: [exerciseId], references: [id])
-  sets     WorkoutSet[]
+  id         String       @id @default(cuid())
+  workoutId  String
+  exerciseId String
+  orderIndex Int
+  createdAt  DateTime     @default(now())
+  exercise   Exercise     @relation(fields: [exerciseId], references: [id])
+  workout    Workout      @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  sets       WorkoutSet[]
 
   @@index([workoutId, orderIndex])
 }
 
 model WorkoutSet {
-  id            String   @id @default(cuid())
+  id            String      @id @default(cuid())
   workoutItemId String
-  weightKg      Decimal  @db.Decimal(6, 2)
+  weightKg      Decimal     @db.Decimal(6, 2)
   reps          Int
-  rpe           Decimal? @db.Decimal(3, 1)
-  createdAt     DateTime @default(now())
-
-  workoutItem WorkoutItem @relation(fields: [workoutItemId], references: [id], onDelete: Cascade)
+  rpe           Decimal?    @db.Decimal(3, 1)
+  createdAt     DateTime    @default(now())
+  workoutItem   WorkoutItem @relation(fields: [workoutItemId], references: [id], onDelete: Cascade)
 
   @@index([workoutItemId])
 }
 
-// better-auth 用のテーブル（デフォルト命名）
 model User {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String   @unique
-  emailVerified Boolean  @default(false)
+  email         String    @unique
+  emailVerified Boolean   @default(false)
   image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  accounts Account[]
-  sessions Session[]
-  passkeys Passkey[]
-  workouts Workout[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  workouts      Workout[]
+  accounts      Account[]
+  passkeys      Passkey[]
+  sessions      Session[]
 
   @@map("user")
 }
@@ -108,8 +85,7 @@ model Session {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([token])
@@ -117,20 +93,19 @@ model Session {
 }
 
 model Account {
-  id                String   @id @default(cuid())
-  accountId         String
-  providerId        String
-  userId            String
-  accessToken       String?
-  refreshToken      String?
-  idToken           String?
-  expiresAt         DateTime?
-  password          String?
-  scope             String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String    @id @default(cuid())
+  accountId    String
+  providerId   String
+  userId       String
+  accessToken  String?
+  refreshToken String?
+  idToken      String?
+  expiresAt    DateTime?
+  password     String?
+  scope        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
   @@index([userId])
@@ -152,7 +127,7 @@ model Verification {
 model Passkey {
   id           String   @id @default(cuid())
   name         String?
-  publicKey    String   @db.Text
+  publicKey    String
   userId       String
   credentialID String   @unique @map("credentialId")
   counter      BigInt   @default(0)
@@ -161,11 +136,21 @@ model Passkey {
   transports   String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([credentialID])
   @@map("passkey")
 }
 
+enum BodyPart {
+  CHEST
+  BACK
+  LEGS
+  ABS
+  ARMS
+  SHOULDERS
+  FOREARMS
+  CALVES
+  OTHER
+}

@@ -19,24 +19,12 @@ async function main() {
   for (const [name, bodyPart] of list) {
     await prisma.exercise.upsert({
       where: {
-        name_bodyPart: {
-          name,
-          bodyPart: bodyPart as
-            | "CHEST"
-            | "BACK"
-            | "LEGS"
-            | "ABS"
-            | "ARMS"
-            | "SHOULDERS"
-            | "FOREARMS"
-            | "CALVES"
-            | "OTHER",
-        },
-      },
+        name,
+      } as any,
       update: {},
       create: {
         name,
-        bodyPart: bodyPart as
+        bodyParts: [bodyPart as
           | "CHEST"
           | "BACK"
           | "LEGS"
@@ -45,9 +33,9 @@ async function main() {
           | "SHOULDERS"
           | "FOREARMS"
           | "CALVES"
-          | "OTHER",
+          | "OTHER"],
         createdBy: null,
-      },
+      } as any,
     });
   }
 
