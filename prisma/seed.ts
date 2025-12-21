@@ -24,16 +24,18 @@ async function main() {
       update: {},
       create: {
         name,
-        bodyParts: [bodyPart as
-          | "CHEST"
-          | "BACK"
-          | "LEGS"
-          | "ABS"
-          | "ARMS"
-          | "SHOULDERS"
-          | "FOREARMS"
-          | "CALVES"
-          | "OTHER"],
+        bodyParts: [
+          bodyPart as
+            | "CHEST"
+            | "BACK"
+            | "LEGS"
+            | "ABS"
+            | "ARMS"
+            | "SHOULDERS"
+            | "FOREARMS"
+            | "CALVES"
+            | "OTHER",
+        ],
         createdBy: null,
       } as any,
     });

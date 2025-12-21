@@ -13,17 +13,45 @@ type ActionResult =
 
 export async function createExerciseAction(
   _prevState: ActionResult | null,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   // #region agent log
-  const fs = await import('fs/promises').catch(()=>null);
-  if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:32',message:'Server Action called',data:{formDataEntries:Array.from(formData.entries())},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})+'\n').catch(()=>{});
+  const fs = await import("fs/promises").catch(() => null);
+  if (fs)
+    await fs
+      .appendFile(
+        "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+        JSON.stringify({
+          location: "app/(actions)/exercise-actions.ts:32",
+          message: "Server Action called",
+          data: { formDataEntries: Array.from(formData.entries()) },
+          timestamp: Date.now(),
+          sessionId: "debug-session",
+          runId: "run1",
+          hypothesisId: "C",
+        }) + "\n",
+      )
+      .catch(() => {});
   // #endregion
   try {
     // 認証チェック
     const userId = await getSessionUserId();
     // #region agent log
-    if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:39',message:'getSessionUserId result',data:{userId:userId||null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})+'\n').catch(()=>{});
+    if (fs)
+      await fs
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:39",
+            message: "getSessionUserId result",
+            data: { userId: userId || null },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "D",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
     if (!userId) {
       return {
@@ -40,12 +68,43 @@ export async function createExerciseAction(
       bodyParts: bodyParts.filter((bp): bp is string => typeof bp === "string"),
     };
     // #region agent log
-    if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:50',message:'Raw form data extracted',data:{rawData},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})+'\n').catch(()=>{});
+    if (fs)
+      await fs
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:50",
+            message: "Raw form data extracted",
+            data: { rawData },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "C",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
 
     const result = ExerciseSchema.safeParse(rawData);
     // #region agent log
-    if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:53',message:'Schema validation result',data:{success:result.success,errors:result.success?null:result.error.issues},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})+'\n').catch(()=>{});
+    if (fs)
+      await fs
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:53",
+            message: "Schema validation result",
+            data: {
+              success: result.success,
+              errors: result.success ? null : result.error.issues,
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "B",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
     if (!result.success) {
       return {
@@ -59,7 +118,21 @@ export async function createExerciseAction(
 
     // 同名の重複チェック
     // #region agent log
-    if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:64',message:'Checking for duplicate exercise',data:{name:validatedName},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})+'\n').catch(()=>{});
+    if (fs)
+      await fs
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:64",
+            message: "Checking for duplicate exercise",
+            data: { name: validatedName },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "E",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
     const existing = await prisma.exercise.findUnique({
       where: {
@@ -67,7 +140,21 @@ export async function createExerciseAction(
       },
     });
     // #region agent log
-    if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:72',message:'Duplicate check result',data:{exists:!!existing},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})+'\n').catch(()=>{});
+    if (fs)
+      await fs
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:72",
+            message: "Duplicate check result",
+            data: { exists: !!existing },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "E",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
 
     if (existing) {
@@ -79,7 +166,25 @@ export async function createExerciseAction(
 
     // データベースに保存
     // #region agent log
-    if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:81',message:'Creating exercise in database',data:{name:validatedName,bodyParts:validatedBodyParts,createdBy:userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})+'\n').catch(()=>{});
+    if (fs)
+      await fs
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:81",
+            message: "Creating exercise in database",
+            data: {
+              name: validatedName,
+              bodyParts: validatedBodyParts,
+              createdBy: userId,
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "E",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
     const exercise = await prisma.exercise.create({
       data: {
@@ -89,7 +194,21 @@ export async function createExerciseAction(
       },
     });
     // #region agent log
-    if(fs) await fs.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:88',message:'Exercise created successfully',data:{exerciseId:exercise.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})+'\n').catch(()=>{});
+    if (fs)
+      await fs
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:88",
+            message: "Exercise created successfully",
+            data: { exerciseId: exercise.id },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "E",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
 
     // キャッシュを再検証
@@ -101,8 +220,26 @@ export async function createExerciseAction(
     };
   } catch (error) {
     // #region agent log
-    const fsErr = await import('fs/promises').catch(()=>null);
-    if(fsErr) await fsErr.appendFile('/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log', JSON.stringify({location:'app/(actions)/exercise-actions.ts:97',message:'Error caught',data:{errorMessage:error instanceof Error?error.message:String(error),errorStack:error instanceof Error?error.stack:undefined},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'ALL'})+'\n').catch(()=>{});
+    const fsErr = await import("fs/promises").catch(() => null);
+    if (fsErr)
+      await fsErr
+        .appendFile(
+          "/Users/hikaru/kinkatsu/kinkatsu-app/.cursor/debug.log",
+          JSON.stringify({
+            location: "app/(actions)/exercise-actions.ts:97",
+            message: "Error caught",
+            data: {
+              errorMessage:
+                error instanceof Error ? error.message : String(error),
+              errorStack: error instanceof Error ? error.stack : undefined,
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session",
+            runId: "run1",
+            hypothesisId: "ALL",
+          }) + "\n",
+        )
+        .catch(() => {});
     // #endregion
     console.error("Failed to create exercise:", error);
     return {

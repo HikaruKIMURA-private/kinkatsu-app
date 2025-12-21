@@ -5,7 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ExerciseRow } from "@/app/(data)/get-exercises";
 
-type BodyPart = "CHEST" | "BACK" | "LEGS" | "ABS" | "ARMS" | "SHOULDERS" | "FOREARMS" | "CALVES" | "OTHER";
+type BodyPart =
+  | "CHEST"
+  | "BACK"
+  | "LEGS"
+  | "ABS"
+  | "ARMS"
+  | "SHOULDERS"
+  | "FOREARMS"
+  | "CALVES"
+  | "OTHER";
 
 const BODY_PART_LABELS: Record<BodyPart, string> = {
   CHEST: "胸",
@@ -25,11 +34,15 @@ type ExerciseListProps = {
 
 export function ExerciseList({ exercises }: ExerciseListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBodyPart, setSelectedBodyPart] = useState<BodyPart | "ALL">("ALL");
+  const [selectedBodyPart, setSelectedBodyPart] = useState<BodyPart | "ALL">(
+    "ALL",
+  );
 
   const filteredExercises = useMemo(() => {
     return exercises.filter((exercise) => {
-      const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = exercise.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
       const matchesBodyPart =
         selectedBodyPart === "ALL" ||
         exercise.bodyParts.some((bp) => bp === selectedBodyPart);

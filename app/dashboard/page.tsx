@@ -17,7 +17,7 @@ export default async function DashboardPage() {
       <p className="text-muted-foreground mb-6">
         ログインに成功しました。ダッシュボードの実装は Task 10 で行います。
       </p>
-      
+
       <div className="space-y-4">
         <div>
           <Link href="/exercises">

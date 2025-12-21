@@ -21,6 +21,6 @@ export async function getExercises(): Promise<ExerciseRow[]> {
       }));
     },
     ["exercises"],
-    { tags: [TAG.EXERCISES] }
+    { tags: [TAG.EXERCISES] },
   )();
 }
