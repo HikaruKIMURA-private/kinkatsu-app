@@ -1,22 +1,21 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
+import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
+import { useActionState, useEffect, useState } from "react";
 import { createExerciseAction } from "@/app/(actions)/exercise-actions";
-import { ExerciseSchema } from "@/lib/schemas/exercise-schema";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ExerciseSchema } from "@/lib/schemas/exercise-schema";
 
 const BODY_PART_OPTIONS = [
   { value: "CHEST", label: "胸" },
@@ -62,27 +61,7 @@ export default function NewExercisePage() {
         <CardContent>
           <form
             id={form.id}
-            onSubmit={(e) => {
-              // #region agent log
-              fetch(
-                "http://127.0.0.1:7242/ingest/8b4a1d01-fe61-4473-825d-4c2d3a3c271b",
-                {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    location: "app/exercises/new/page.tsx:55",
-                    message: "Form submit triggered",
-                    data: {},
-                    timestamp: Date.now(),
-                    sessionId: "debug-session",
-                    runId: "run1",
-                    hypothesisId: "C",
-                  }),
-                },
-              ).catch(() => {});
-              // #endregion
-              form.onSubmit(e);
-            }}
+            onSubmit={form.onSubmit}
             action={formAction}
             className="space-y-4"
           >
@@ -121,14 +100,11 @@ export default function NewExercisePage() {
 
             {/* 部位 */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">
+              <div className="text-sm font-medium">
                 部位 <span className="text-destructive">*</span>
-              </label>
-              <div
-                className="grid grid-cols-3 gap-2"
-                role="group"
-                aria-label="部位選択"
-              >
+              </div>
+              <fieldset className="grid grid-cols-3 gap-2">
+                <legend className="sr-only">部位選択</legend>
                 {BODY_PART_OPTIONS.map((option) => {
                   const isChecked = selectedBodyParts.includes(option.value);
                   return (
@@ -173,7 +149,7 @@ export default function NewExercisePage() {
                     </label>
                   );
                 })}
-              </div>
+              </fieldset>
               {state?.status === "error" &&
                 state.issues &&
                 state.issues.some((issue) =>

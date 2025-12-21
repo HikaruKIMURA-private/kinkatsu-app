@@ -20,6 +20,7 @@ async function main() {
     await prisma.exercise.upsert({
       where: {
         name,
+        // biome-ignore lint/suspicious/noExplicitAny: Prismaの型推論が不完全なため
       } as any,
       update: {},
       create: {
@@ -37,6 +38,7 @@ async function main() {
             | "OTHER",
         ],
         createdBy: null,
+        // biome-ignore lint/suspicious/noExplicitAny: Prismaの型推論が不完全なため
       } as any,
     });
   }

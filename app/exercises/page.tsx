@@ -1,9 +1,9 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { getExercises } from "@/app/(data)/get-exercises";
-import { ExerciseList } from "./exercise-list";
 import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/auth";
+import { ExerciseList } from "./exercise-list";
 
 export default async function ExercisesPage() {
   const user = await getCurrentUser();

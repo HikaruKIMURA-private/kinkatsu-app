@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getSessionUserId } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { getSessionUserId } from "@/lib/auth";
 
 export default async function DashboardPage() {
   // Task 5 で getCurrentUser() を完全実装するまで、セッションIDを確認

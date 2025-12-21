@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
+import { prisma } from "@/lib/prisma";
 import { TAG } from "@/lib/tags";
 
 export type ExerciseRow = {
