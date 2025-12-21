@@ -968,21 +968,21 @@ feat: getCurrentUser() を実装（better-auth User を直接使用）
 
 **作業内容**:
 
-- [ ] `lib/tags.ts` の作成（キャッシュタグ定義）
-- [ ] `app/(data)/get-exercises.ts` の作成（`"use cache"` 付き）
-- [ ] `app/(actions)/exercise-actions.ts` の作成
-- [ ] `/exercises` ページの作成（種目一覧、検索/フィルタ）
-- [ ] `/exercises/new` ページの作成（種目追加フォーム）
-- [ ] `conform` + `useActionState` でフォーム処理
-- [ ] 追加後のリダイレクトまたはリスト更新
+- [x] `lib/tags.ts` の作成（キャッシュタグ定義）
+- [x] `app/(data)/get-exercises.ts` の作成（`"use cache"` 付き）
+- [x] `app/(actions)/exercise-actions.ts` の作成
+- [x] `/exercises` ページの作成（種目一覧、検索/フィルタ）
+- [x] `/exercises/new` ページの作成（種目追加フォーム）
+- [x] `conform` + `useActionState` でフォーム処理
+- [x] 追加後のリダイレクトまたはリスト更新
 
 **確認事項**:
 
-- [ ] 種目一覧が表示される
-- [ ] 検索/フィルタが動作する
-- [ ] 種目追加ができる
-- [ ] 追加後、一覧に即座に反映される（再検証 OK）
-- [ ] 同名+同部位の重複が防げる
+- [x] 種目一覧が表示される
+- [x] 検索/フィルタが動作する
+- [x] 種目追加ができる
+- [x] 追加後、一覧に即座に反映される（再検証 OK）
+- [x] 同名+同部位の重複が防げる
 
 **コミットメッセージ例**:
 
